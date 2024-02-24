@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Status Lookup</title>
+</head>
+
+<body>
+    <h1>Card Status Lookup</h1>
+
+    <form id="cardStatusForm" action="/get_card_status" method="get">
+        <label for="inputType">Select Search Type:</label>
+        <select name="inputType" id="inputType" required>
+            <option value="User_Contact">User Contact</option>
+            <option value="Card_ID">Card ID</option>
+        </select>
+
+        <br>
+
+        <label for="searchInput">Enter Search Input:</label>
+        <input type="text" name="searchInput" id="searchInput" required>
+
+        <br>
+
+        <button type="button" onclick="getCardStatus()">Get Card Status</button>
+    </form>
+
+    <h2>Card Status Result:</h2>
+    <div id="cardStatusResult">
+        <p>Status: <span id="status"></span></p>
+        <p>Timestamp: <span id="timestamp"></span></p>
+        <p>Comment: <span id="comment"></span></p>
+    </div>
+
+    <script>
+        function getCardStatus() {
+            var form = document.getElementById('cardStatusForm');
+            var formData = new FormData(form);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/get_card_status?' + new URLSearchParams(formData).toString(), true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var result = JSON.parse(xhr.responseText);
+
+                    // Update result dynamically
+                    document.getElementById('status').innerText = result.Status;
+                    document.getElementById('timestamp').innerText = result.Timestamp;
+                    document.getElementById('comment').innerText = result.Comment;
+                }
+            };
+
+            xhr.send();
+        }
+    </script>
+</body>
+
+</html>

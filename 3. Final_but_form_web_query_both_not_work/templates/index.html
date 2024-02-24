@@ -1,0 +1,52 @@
+<!-- templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Status Lookup</title>
+</head>
+<body>
+    <h1>Card Status Lookup</h1>
+    <form id="cardStatusForm">
+        <label for="identifier">Identifier:</label>
+        <input type="text" id="identifier" name="identifier" required>
+        
+        <label for="identifierType">Identifier Type:</label>
+        <select id="identifierType" name="identifierType" required>
+            <option value="user_phone">User Phone</option>
+            <option value="card_id">Card ID</option>
+        </select>
+        
+        <button type="button" onclick="getCardStatus()">Get Card Status</button>
+    </form>
+
+    <div id="result" style="margin-top: 20px;"></div>
+
+    <script>
+        function getCardStatus() {
+            const identifier = document.getElementById("identifier").value;
+            const identifierType = document.getElementById("identifierType").value;
+
+            fetch(`/get_card_status?identifier=${identifier}&identifier_type=${identifierType}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultDiv = document.getElementById("result");
+
+                    if (data.error) {
+                        // Display error message
+                        resultDiv.innerHTML = `<p><strong>Error:</strong> ${data.error}</p>`;
+                    } else {
+                        // Display card status information
+                        resultDiv.innerHTML = `<p><strong>Card ID:</strong> ${data.card_status.card_id}</p>
+                                               <p><strong>User Phone:</strong> ${data.card_status.user_phone}</p>
+                                               <p><strong>Timestamp:</strong> ${data.card_status.timestamp}</p>
+                                               <p><strong>Comment:</strong> ${data.card_status.comment}</p>`;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
